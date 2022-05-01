@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인페이지</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <div>
+            <input id="code" placeholder="코스번호를 입력해주세요" required style="height: 20px;" />
+            <button id="btn-code">입력</button>
+        </div>
+        <div id="content-box"></div>
+    </div>
+
+    <script>
+        let rendering = (data) => {
+            return `
+            <p>코스명 : ${data.courseName}</p>
+            <ul>
+                <li>지역 : ${data.courseAreaName} ${data.spotAreaName}</li>
+                <li>관광지명 : ${data.spotName}</li>
+                <li>예보시간 : ${data.tm}</li>
+                <li>하늘상태 : ${data.sky}</li>
+                <li>강수량 : ${data.rn}</li>
+            </ul>`;
+        };
+        let load = async () => {
+            let code = $("#code").val();
+            let response = await fetch(`/weather/${code}`);
+            let responseParse = await response.json();
+
+            let data = responseParse.response;
+            let weather = data.body.items.item[0].sky;
+            console.log(weather);
+            if (weather == "1") {
+                data.body.items.item[0].sky = "맑음";
+            } else if (weather == "2") {
+                data.body.items.item[0].sky = "구름";
+            } else if (weather == "3") {
+                data.body.items.item[0].sky = "구름";
+            } else if (weather == "4") {
+                data.body.items.item[0].sky = "비";
+            } else if (weather == "5") {
+                data.body.items.item[0].sky = "소나기";
+            } else if (weather == "6") {
+                data.body.items.item[0].sky = "비눈";
+            } else if (weather == "7") {
+                data.body.items.item[0].sky = "눈비";
+            } else if (weather == "8") {
+                data.body.items.item[0].sky = "눈";
+            }
+            console.log(weather);
+            $("#content-box").empty();
+            $("#content-box").prepend(rendering(data.body.items.item[0]));
+        };
+        $("#btn-code").click(() => {
+            load();
+        });
+    </script>
+</body>
+
+</html>
